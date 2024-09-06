@@ -78,7 +78,7 @@ namespace ESCapism
             {
                 foreach (var button in FindObjectsOfType<RoR2.UI.HGButton>())
                 {
-                    if ((button.name.Equals("CancelButton")&& EnabledInGame.Value == true) || (button.name.StartsWith("NakedButton") && EnabledInMenu.Value == true))
+                    if ((button.name.Equals("CancelButton")&& EnabledInGame.Value == true) || ((button.name.StartsWith("NakedButton") || button.name.StartsWith("Button, Return") || button.name.StartsWith("BackButton")) && EnabledInMenu.Value == true))
                     {
                         CancelButtons.Add(button);
                     }

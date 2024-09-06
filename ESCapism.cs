@@ -1,10 +1,15 @@
 using BepInEx;
+using BepInEx.Bootstrap;
+using BepInEx.Configuration;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using R2API;
+using RiskOfOptions;
+using RiskOfOptions.Options;
 using RoR2.UI;
 using System;
 using System.Collections.Generic;
+
 namespace ESCapism
 {
     [BepInDependency(ItemAPI.PluginGUID)]
@@ -19,14 +24,47 @@ namespace ESCapism
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Hibiscus";
         public const string PluginName = "ESCapism";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.5.0";
+
+
+        public static ConfigEntry<bool> EnabledInGame { get; set; }
+        public static ConfigEntry<bool> EnabledInMenu { get; set; }
 
         private static List<RoR2.UI.HGButton> CancelButtons = new List<RoR2.UI.HGButton>();
 
         public void Awake()
         {
-            IL.RoR2.UI.MPEventSystem.Update += HandleEventSystemUpdate;
+            CreateConfig();
 
+            if (Chainloader.PluginInfos.ContainsKey("com.rune580.riskofoptions"))
+            {
+                SetupRiskOfOptions();
+            }
+            
+            IL.RoR2.UI.MPEventSystem.Update += HandleEventSystemUpdate;
+        }
+
+        private void CreateConfig()
+        {
+            EnabledInGame = Config.Bind<bool>(
+            "General",
+            "Enabled in game",
+                    true,
+            "If enabled, you will be able to close windows by pressing ESCAPE in game"
+            );
+
+            EnabledInMenu = Config.Bind<bool>(
+            "MySection",
+            "Enabled in menu",
+                    true,
+            "If enabled, you will be able to close windows by pressing ESCAPE in menu"
+            );
+        }
+
+        private void SetupRiskOfOptions()
+        {
+            ModSettingsManager.AddOption(new CheckBoxOption(EnabledInGame));
+            ModSettingsManager.AddOption(new CheckBoxOption(EnabledInMenu));
         }
 
         private void HandleEventSystemUpdate(ILContext il)
@@ -40,7 +78,7 @@ namespace ESCapism
             {
                 foreach (var button in FindObjectsOfType<RoR2.UI.HGButton>())
                 {
-                    if (button.name.Equals("CancelButton"))
+                    if ((button.name.Equals("CancelButton")&& EnabledInGame.Value == true) || (button.name.StartsWith("NakedButton") && EnabledInMenu.Value == true))
                     {
                         CancelButtons.Add(button);
                     }

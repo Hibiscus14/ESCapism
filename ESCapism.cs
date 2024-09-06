@@ -54,7 +54,7 @@ namespace ESCapism
             );
 
             EnabledInMenu = Config.Bind<bool>(
-            "MySection",
+            "General",
             "Enabled in menu",
                     true,
             "If enabled, you will be able to close windows by pressing ESCAPE in menu"

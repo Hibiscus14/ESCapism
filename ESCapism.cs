@@ -3,7 +3,6 @@ using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
-using R2API;
 using RiskOfOptions;
 using RiskOfOptions.Options;
 using RoR2.UI;
@@ -13,10 +12,6 @@ using System.Linq;
 
 namespace ESCapism
 {
-    [BepInDependency(ItemAPI.PluginGUID)]
-
-    [BepInDependency(LanguageAPI.PluginGUID)]
-
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
 
     public class ESCapismPlugin : BaseUnityPlugin
@@ -25,7 +20,7 @@ namespace ESCapism
         public const string PluginGUID = PluginAuthor + "." + PluginName;
         public const string PluginAuthor = "Hibiscus";
         public const string PluginName = "ESCapism";
-        public const string PluginVersion = "1.5.0";
+        public const string PluginVersion = "1.5.4";
 
 
         public static ConfigEntry<bool> EnabledInGame { get; set; }
@@ -80,7 +75,7 @@ namespace ESCapism
             {
                 PickupPickerPanel[] pickupPickerPanels = (PickupPickerPanel[])FindObjectsOfType(typeof(PickupPickerPanel));
                 HGPopoutPanel[] popoutPanels = (HGPopoutPanel[])FindObjectsOfType(typeof(HGPopoutPanel));
-                if (pickupPickerPanels.Length > 0 && EnabledInGame.Value )
+                if (pickupPickerPanels.Length > 0 && EnabledInGame.Value)
                     FindButtonsOnPanels(pickupPickerPanels);
                 else if (popoutPanels.Length > 0 && EnabledInMenu.Value)
                     FindButtonsOnPanels(popoutPanels);

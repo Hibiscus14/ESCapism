@@ -9,6 +9,7 @@ using RiskOfOptions.Options;
 using RoR2.UI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ESCapism
 {
@@ -31,6 +32,7 @@ namespace ESCapism
         public static ConfigEntry<bool> EnabledInMenu { get; set; }
 
         private static List<RoR2.UI.HGButton> CancelButtons = new List<RoR2.UI.HGButton>();
+        private string[] _menuButtonNames = { "NakedButton", "NakedButton (Back)", "Button, Return", "BackButton" };
 
         public void Awake()
         {
@@ -40,7 +42,7 @@ namespace ESCapism
             {
                 SetupRiskOfOptions();
             }
-            
+
             IL.RoR2.UI.MPEventSystem.Update += HandleEventSystemUpdate;
         }
 
@@ -76,14 +78,22 @@ namespace ESCapism
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate<Action<MPEventSystem>>((eventSystem) =>
             {
-                foreach (var button in FindObjectsOfType<RoR2.UI.HGButton>())
+                PickupPickerPanel[] pickupPickerPanels = (PickupPickerPanel[])FindObjectsOfType(typeof(PickupPickerPanel));
+                HGPopoutPanel[] popoutPanels = (HGPopoutPanel[])FindObjectsOfType(typeof(HGPopoutPanel));
+                if (pickupPickerPanels.Length > 0 && EnabledInGame.Value )
+                    FindButtonsOnPanels(pickupPickerPanels);
+                else if (popoutPanels.Length > 0 && EnabledInMenu.Value)
+                    FindButtonsOnPanels(popoutPanels);
+                else
                 {
-                    if ((button.name.Equals("CancelButton")&& EnabledInGame.Value == true) || ((button.name.StartsWith("NakedButton") || button.name.StartsWith("Button, Return") || button.name.StartsWith("BackButton")) && EnabledInMenu.Value == true))
+                    foreach (var button in FindObjectsOfType<RoR2.UI.HGButton>())
                     {
-                        CancelButtons.Add(button);
+                        if (_menuButtonNames.Any(name => button.name.Equals(name)) && EnabledInMenu.Value)
+                        {
+                            CancelButtons.Add(button);
+                        }
                     }
                 }
-
                 if (CancelButtons.Count > 0)
                 {
                     CloseMenu();
@@ -99,9 +109,21 @@ namespace ESCapism
             c.Next.Operand = label;
             c.Next.OpCode = OpCodes.Brfalse;
         }
+        private void FindButtonsOnPanels<T>(T[] panels)
+        {
+            foreach (var panel in panels)
+            {
+                foreach (var button in FindObjectsOfType<RoR2.UI.HGButton>())
+                {
+                    if (button.name.Equals("CancelButton"))
+                    {
+                        CancelButtons.Add(button);
+                    }
+                }
+            }
+        }
 
-
-        public static void CloseMenu()
+        private void CloseMenu()
         {
             while (CancelButtons.Count != 0)
             {

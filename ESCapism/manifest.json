@@ -1,6 +1,6 @@
 {
   "name": "ESCapism",
-  "version_number": "1.5.2",
+  "version_number": "1.5.3",
   "website_url": "https://github.com/Hibiscus14/ESCapism",
   "description": "Pressing ESCAPE now closes command artifact, scrapper, void capsules and all other stuff that needs to be closed by pressing escape.",
   "dependencies": [

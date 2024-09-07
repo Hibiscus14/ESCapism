@@ -16,3 +16,8 @@
 -   **1.5.2**
 
     -   Fixed menu tabs that wasn't working.
+
+-   **1.5.3**
+
+    -   Fixed that pressing ESCAPE in the character menu always goes to the main menu, even if submenus are open.
+    -   Fixed that if you change mod settings during gameplay and press ESCAPE, the settings change is not applied.
